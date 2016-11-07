@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import pl.ppkwu.lab.api.FileOperations;
 import pl.ppkwu.lab.api.ReadCallback;
 import pl.ppkwu.lab.api.WriteCallback;
+import pl.ppkwu.lab.impl.FileOperationsImpl;
 
 import java.io.File;
 import java.net.URL;
@@ -22,6 +23,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 public class MainController implements Initializable {
+
+    private static final Logger log = Logger.getLogger(MainController.class.getSimpleName());
 
     @FXML
     private BorderPane root;
@@ -46,27 +49,14 @@ public class MainController implements Initializable {
 
     private Stage stage;
 
-    private StringProperty currentFileProperty = new SimpleStringProperty();
+    private String currentFile;
 
     private FileOperations fileOperations;
 
-    private static final Logger log = Logger.getLogger(MainController.class.getSimpleName());
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        fileOperations = mockedFileOperations();
-        initializeButtonsEvents();
-        initializeTextField();
+        fileOperations = new FileOperationsImpl();
 
-        log.info("Controller has been initialized");
-
-    }
-
-    private void initializeTextField() {
-        fileNameField.textProperty().bind(currentFileProperty);
-    }
-
-    private void initializeButtonsEvents() {
         writeButton.setOnAction((event) -> {
             onWriteButtonClicked(event);
         });
@@ -78,6 +68,8 @@ public class MainController implements Initializable {
         openButton.setOnAction((event) -> {
             onOpenFileButtonClicked(event);
         });
+
+        log.info("Controller has been initialized");
     }
 
     private void onOpenFileButtonClicked(ActionEvent event) {
@@ -88,20 +80,23 @@ public class MainController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(stage);
 
         if (selectedFile != null) {
-            currentFileProperty.setValue(selectedFile.getAbsolutePath());
+            fileNameField.setText(selectedFile.getAbsolutePath());
         }
     }
 
     private void onReadButtonClicked(ActionEvent event) {
         log.info("Load button clicked");
 
-        fileOperations.readFile(currentFileProperty.getValue(), new ReadCallback() {
+        String fileName = fileNameField.getText();
+        statusLabel.setText("Processing...");
+        fileOperations.readFile(fileName, new ReadCallback() {
 
             @Override
             public void onSuccess(String content) {
                 log.info("Read file operation succeed");
                 log.info("Content: \n" + content);
                 statusLabel.setText("Content of file has been loaded");
+                fileContentArea.setText(content);
             }
 
             @Override
@@ -115,8 +110,10 @@ public class MainController implements Initializable {
     private void onWriteButtonClicked(ActionEvent event) {
         log.info("Write button clicked");
 
+        String fileName = fileNameField.getText();
         String content = fileContentArea.getText();
-        fileOperations.writeFile(currentFileProperty.getValue(), content, new WriteCallback() {
+        statusLabel.setText("Processing...");
+        fileOperations.writeFile(fileName, content, new WriteCallback() {
 
             @Override
             public void onSuccess() {
@@ -135,20 +132,5 @@ public class MainController implements Initializable {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-    }
-
-    private FileOperations mockedFileOperations() {
-        return new FileOperations() {
-
-            @Override
-            public void readFile(String fileName, ReadCallback callback) {
-                callback.onSuccess("Example content");
-            }
-
-            @Override
-            public void writeFile(String fileName, String content, WriteCallback callback) {
-                callback.onFailure("File not found");
-            }
-        };
     }
 }
