@@ -1,7 +1,6 @@
 package pl.ppkwu.lab.gui;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -95,14 +94,18 @@ public class MainController implements Initializable {
             public void onSuccess(String content) {
                 log.info("Read file operation succeed");
                 log.info("Content: \n" + content);
-                statusLabel.setText("Content of file has been loaded");
-                fileContentArea.setText(content);
+                Platform.runLater(() -> {
+                    statusLabel.setText("Content of file has been loaded");
+                    fileContentArea.setText(content);
+                });
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 log.warning("Read file operation failed: " + errorMessage);
-                statusLabel.setText(errorMessage);
+                Platform.runLater(() -> {
+                    statusLabel.setText(errorMessage);
+                });
             }
         });
     }
@@ -118,14 +121,18 @@ public class MainController implements Initializable {
             @Override
             public void onSuccess() {
                 log.info("Write file operation succeed");
-                fileContentArea.setText(content);
-                statusLabel.setText("Content has been written to file");
+                Platform.runLater(() -> {
+                    fileContentArea.setText(content);
+                    statusLabel.setText("Content has been written to file");
+                });
             }
 
             @Override
             public void onFailure(String errorMessage) {
                 log.info("Read file operation failed: " + errorMessage);
-                statusLabel.setText(errorMessage);
+                Platform.runLater(() -> {
+                    statusLabel.setText(errorMessage);
+                });
             }
         });
     }
