@@ -1,11 +1,22 @@
 Dokumentacja API do obsługi plików
 
 1. Interfejs FileOperations
-    - metoda readFile(String fileName, Callback callback);
-        # fileName - nazwa pliku, ktorego zawartosc ma zostac odczytana
-        # callback - callback, ktorego wywolanie nastepuje po odczycie pliku
 
-    - metoda writeFile(String fileName, String content, Callback callback);
-        # fileName - nazwa pliku, do ktorego ma zostac zapisana zawartosc content
-        # content - dane do zapisu
-        # callback - callback, ktorego wywolanie nastepuje po zapisie do pliku
+    # void readFile(String fileName, Callback callback)
+      Metoda umozliwiajace odczyt z pliku
+        * fileName - nazwa pliku, ktorego zawartosc ma zostac odczytana
+        * callback - callback, ktorego wywolanie nastepuje po odczycie pliku
+
+    # void writeFile(String fileName, String content, Callback callback)
+      Metoda umozliwiajaca zapis do pliku
+        * fileName - nazwa pliku, do ktorego ma zostac zapisana zawartosc content
+        * content - dane do zapisu
+        * callback - callback, ktorego wywolanie nastepuje po zapisie do pliku
+
+2. Intefejs Callback
+    # void onSuccess()
+    Metoda wywolywana po operacji zakonczonej powodzeniem
+
+    # void onFailure()
+    Metoda wywolywana po operacji zakonczonej niepowodzeniem
+
