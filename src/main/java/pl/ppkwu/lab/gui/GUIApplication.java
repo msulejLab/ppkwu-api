@@ -13,7 +13,12 @@ public class GUIApplication extends Application {
     }
 
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("fxml/main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("fxml/main.fxml"));
+        Parent root = loader.load();
+
+        MainController controller = loader.getController();
+        controller.setStage(primaryStage);
+
         Scene scene = new Scene(root);
         primaryStage.setTitle("Files Application");
         primaryStage.setScene(scene);
